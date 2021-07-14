@@ -68,6 +68,7 @@ function App() {
         <>
           <p>You are connected to a web3 provider.</p>
           <p>Your current wallet address is {address}.</p>
+          <p style={{color: "red"}}>WARNING: CURRENTLY IN BETA, ONLY WORKING ON KOVAN TESTNET</p>
           <CallViewMethodButton
             name="Your balance"
             onUpdate={getBalance}

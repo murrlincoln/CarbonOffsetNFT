@@ -1,8 +1,8 @@
 {
   "files": {
     "main.css": "/CarbonOffsetNFT/static/css/main.26824aa6.chunk.css",
-    "main.js": "/CarbonOffsetNFT/static/js/main.2bba90aa.chunk.js",
-    "main.js.map": "/CarbonOffsetNFT/static/js/main.2bba90aa.chunk.js.map",
+    "main.js": "/CarbonOffsetNFT/static/js/main.722469a8.chunk.js",
+    "main.js.map": "/CarbonOffsetNFT/static/js/main.722469a8.chunk.js.map",
     "runtime-main.js": "/CarbonOffsetNFT/static/js/runtime-main.eba816bd.js",
     "runtime-main.js.map": "/CarbonOffsetNFT/static/js/runtime-main.eba816bd.js.map",
     "static/js/2.0c12d263.chunk.js": "/CarbonOffsetNFT/static/js/2.0c12d263.chunk.js",
@@ -15,6 +15,6 @@
     "static/js/runtime-main.eba816bd.js",
     "static/js/2.0c12d263.chunk.js",
     "static/css/main.26824aa6.chunk.css",
-    "static/js/main.2bba90aa.chunk.js"
+    "static/js/main.722469a8.chunk.js"
   ]
 }

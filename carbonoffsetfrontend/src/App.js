@@ -10,12 +10,18 @@ import useConnection from './hooks/Connection';
 // Modify this to be your contract's address
 const contractAddress = '0xE38F44544D868D0cECc3fc197555A3b81Fc36098';
 
+
 const provider = new ethers.providers.Web3Provider(window.ethereum);
 const contract = new ethers.Contract(
   contractAddress,
   contractAbi,
   provider.getSigner(0),
 );
+
+
+function updateSupply(getSupply) {
+  setInterval(getSupply, 60000)
+}
 
 function App() {
   // Custom React hook that listens to MetaMask events
@@ -60,12 +66,19 @@ function App() {
     }
   };
 
+  
+
+  
+
   return provider ? (
     <main>
       <div className="div">
       <h1 className="title">Carbon Neutralized</h1>
+      <h3>Join {supply} users on the journey to carbon neutrality</h3>
+          {updateSupply(getSupply)}
       {isConnected ? (
         <>
+          
           <p>You are connected to a web3 provider.</p>
           <p>Your current wallet address is {address}.</p>
           <p style={{color: "red"}}>WARNING: CURRENTLY IN BETA, ONLY WORKING ON KOVAN TESTNET</p>
@@ -74,11 +87,7 @@ function App() {
             onUpdate={getBalance}
             value={balance}
           />
-          <CallViewMethodButton
-            name="Total number of uses"
-            onUpdate={getSupply}
-            value={supply}
-          />
+
           <button type="button" onClick={mintNFT}>
             Offset your carbon footprint!
           </button>

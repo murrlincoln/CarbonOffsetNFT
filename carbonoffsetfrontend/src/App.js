@@ -10,6 +10,13 @@ import useConnection from './hooks/Connection';
 // Modify this to be your contract's address
 const contractAddress = '0xE38F44544D868D0cECc3fc197555A3b81Fc36098';
 
+if (window.ethereum) {
+  console.log("window.eth")
+} else {
+  console.log("no window.eth")
+  alert("No MetaMask detected, the website will crash")
+}
+
 
 const provider = new ethers.providers.Web3Provider(window.ethereum);
 const contract = new ethers.Contract(
@@ -20,7 +27,7 @@ const contract = new ethers.Contract(
 
 
 function updateSupply(getSupply) {
-  setInterval(getSupply, 60000)
+  setInterval(getSupply, 5000)
 }
 
 function App() {
@@ -35,7 +42,12 @@ function App() {
 
   useEffect(() => {
     if (isConnected) {
-      
+      if (isConnected) {
+        contract.on('Mint',(to, tokenID) => {
+          console.log('Mint', to, tokenID)
+          alert('Transaction completed!')
+        })
+      }
     }
   }, [isConnected, address]);
 

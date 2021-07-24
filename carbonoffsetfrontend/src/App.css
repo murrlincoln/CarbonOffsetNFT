@@ -9,6 +9,29 @@
   align-items: center;
 }
 
+.connected {
+  background-color: white;
+  width: 600px;
+  max-width: 100%;
+  padding: 30px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.pending {
+  position: fixed;
+  top: 0;
+  right: 5%;
+  background: green;
+  padding: 8px;
+  color: #fff;
+  font-size: 1.4em;
+  width: 100px;
+  height: 40px;
+  border-radius: 40px;
+}
+
 button {
   appearance: unset;
   font-family: inherit;

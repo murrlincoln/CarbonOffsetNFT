@@ -16,17 +16,22 @@ export default function useConnection() {
   };
 
   // Initialize state variables
-  window.ethereum
+  if (window.ethereum) {
+    window.ethereum
     .request({
       method: 'eth_accounts',
     })
     .then(handler);
+  }
+
 
   // Event listener for when a user logs in/out or switches accounts
   useEffect(() => {
+    if (window.ethereum)
     window.ethereum.addListener('accountsChanged', handler);
 
     return () => {
+      if (window.ethereum)
       window.ethereum.removeListener('accountsChanged', handler);
     };
   }, []);

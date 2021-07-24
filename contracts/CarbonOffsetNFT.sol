@@ -2,9 +2,9 @@
 
 pragma solidity ^0.8.4;
 
-import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
-import "@openzeppelin/contracts/token/ERC721/extensions/ERC721URIStorage.sol";
-import "@openzeppelin/contracts/utils/Counters.sol";
+import "../deps/npm/@openzeppelin/contracts/token/ERC721/ERC721.sol";
+import "../deps/npm/@openzeppelin/contracts/token/ERC721/extensions/ERC721URIStorage.sol";
+import "../deps/npm/@openzeppelin/contracts/utils/Counters.sol";
 import "https://github.com/Uniswap/uniswap-v2-periphery/blob/master/contracts/interfaces/IUniswapV2Router02.sol";
 
 
@@ -21,9 +21,6 @@ contract CarbonOffsetNFT is ERC721URIStorage {
     address private UPC02 = 0x4F96Fe3b7A6Cf9725f59d353F723c1bDb64CA6Aa ; //currently multiDaiKovan, 0xaF9700FcA16276Cd69c4e35FEecC66D1116826cC is the mainnet address for UPC02
     
     event Mint(address indexed to, uint256 indexed tokenId);
-
-
-    
     
     constructor() ERC721("CarbonOffsetNFT", "C02") {
         uniswapRouter = IUniswapV2Router02(UNISWAP_ROUTER_ADDRESS);
@@ -41,22 +38,18 @@ contract CarbonOffsetNFT is ERC721URIStorage {
         //doesn't make sense to run this unless msg.value is greater than this amount, which is currently 
         require (msg.value > 0.00019662 ether);
         
+            
         
-        //Have user pay x ETH to the call
-        
-        
-        //Use the Uniswap ETH-UPC02 pool to exchange ETH for ETH-UPC02, which is sent to burn address
-        
+        //Use the Uniswap ETH-UPC02 pool to exchange ETH for ETH-UPC02, which is sent to burn address    
         convertEthToC02(msg.value);
         
         
         //mint an NFT for the user as a recognition of their carbon offset
-        
         _tokenIds.increment();
         
         uint256 newItemId = _tokenIds.current();
         _mint(msg.sender, newItemId);
-        _setTokenURI(newItemId, tokenURI); //"../json/exampleCarbonJSON.json" in theory
+        _setTokenURI(newItemId, tokenURI); //https://raw.githubusercontent.com/murrlincoln/CarbonOffsetNFT/main/NFTURI.json
         
         emit Mint(msg.sender, newItemId);
         
@@ -64,22 +57,16 @@ contract CarbonOffsetNFT is ERC721URIStorage {
         return newItemId;
         //todo if possible: Allow the NFT to change its value based on the amount paid by the user
         
-        
-        
     }
     
     function convertEthToC02(uint256 ethAmount) internal {
-        
-        //require(msg.value > 100 gwei);
         
         uint deadline = block.timestamp + 15;
         address burnAddress = 0x0000000000000000000000000000000000000000;
         
         
         uniswapRouter.swapExactETHForTokens{ value: ethAmount }(address(this).balance, getPathForETHtoC02(), burnAddress, deadline);
-        
-        
-        
+
     }
     
     function getPathForETHtoC02() private view returns (address[] memory) {

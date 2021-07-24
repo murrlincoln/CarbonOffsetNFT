@@ -3,6 +3,7 @@ import { useEffect, useState } from 'react';
 import './App.css';
 import CallViewMethodButton from './components/CallViewMethodButton';
 import ConnectToMetamaskButton from './components/ConnectToMetamaskButton';
+import Pending from "./components/Pending";
 // Update contract.abi.json to contain your contract's ABI
 import contractAbi from './contract.abi.json';
 import useConnection from './hooks/Connection';
@@ -10,20 +11,32 @@ import useConnection from './hooks/Connection';
 // Modify this to be your contract's address
 const contractAddress = '0xE38F44544D868D0cECc3fc197555A3b81Fc36098';
 
+//determines if there is a current pending transaction
+let hasPendingTransactions;
+
+var network = ethers.providers.getNetwork("kovan")
+
+
+//provider depends on whether or not metamask is installed
+let provider;
+let contract;
+
 if (window.ethereum) {
-  console.log("window.eth")
+  provider = new ethers.providers.Web3Provider(window.ethereum);
+
+  contract = new ethers.Contract(
+    contractAddress,
+    contractAbi,
+    provider.getSigner(0),
+  );
 } else {
-  console.log("no window.eth")
-  alert("No MetaMask detected, the website will crash")
+  provider = new ethers.providers.getDefaultProvider(network);
+  contract = new ethers.Contract(
+    contractAddress,
+    contractAbi,
+  );
 }
 
-
-const provider = new ethers.providers.Web3Provider(window.ethereum);
-const contract = new ethers.Contract(
-  contractAddress,
-  contractAbi,
-  provider.getSigner(0),
-);
 
 
 function updateSupply(getSupply) {
@@ -43,9 +56,10 @@ function App() {
   useEffect(() => {
     if (isConnected) {
       if (isConnected) {
-        contract.on('Mint',(to, tokenID) => {
+        contract.on('Mint', (to, tokenID) => {
           console.log('Mint', to, tokenID)
           alert('Transaction completed!')
+          hasPendingTransactions = false;
         })
       }
     }
@@ -53,12 +67,16 @@ function App() {
 
   // Read-only method call
   const getSupply = async () => {
-    setSupply((await contract.totalSupply()).toString());
+    if (isConnected) {
+      setSupply((await contract.totalSupply()).toString());
+    }
   };
 
   // Read-only method call, returns a BigNumber
   const getBalance = async () => {
-    setBalance((await contract.balanceOf(address)).toString());
+    if (isConnected) {
+      setBalance((await contract.balanceOf(address)).toString());
+    }
   };
 
   // Write method with attached ETH
@@ -70,43 +88,62 @@ function App() {
 
     if (valueStr !== null) {
       // This promise will reject if the user cancels the transaction
-      await contract.mintNFT(('./NFTURI.json'), { //TODO replace with JSON
+      hasPendingTransactions = true;
+      await contract.mintNFT(('https://raw.githubusercontent.com/murrlincoln/CarbonOffsetNFT/main/NFTURI.json'), {
         // Attach additional value to this transaction
         value: ethers.utils.parseEther(valueStr),
       });
-      alert('Success!');
+
+
     }
   };
 
-  
 
-  
 
-  return provider ? (
+
+
+  return (
     <main>
       <div className="div">
-      <h1 className="title">Carbon Neutralized</h1>
-      <h3>Join {supply} users on the journey to carbon neutrality</h3>
-          {updateSupply(getSupply)}
-      {isConnected ? (
-        <>
-          
-          <p>You are connected to a web3 provider.</p>
-          <p>Your current wallet address is {address}.</p>
-          <p style={{color: "red"}}>WARNING: CURRENTLY IN BETA, ONLY WORKING ON KOVAN TESTNET</p>
-          <CallViewMethodButton
-            name="Your balance"
-            onUpdate={getBalance}
-            value={balance}
-          />
+        <h1 className="title">Carbon Neutralized</h1>
+        <h3>Join {supply} others on the journey to carbon neutrality</h3>
+        {updateSupply(getSupply)}
 
-          <button type="button" onClick={mintNFT}>
-            Offset your carbon footprint!
-          </button>
-        </>
-      ) : (
-        <ConnectToMetamaskButton />
-      )}
+        {!window.ethereum ? (
+          <>
+            <p>
+              Please install a Web3 provider like{' '}
+              <a href="https://metamask.io/">MetaMask</a> to use this app.
+            </p>
+          </>
+        ) : (
+          <div className="connected">
+            {isConnected ? (
+              <>
+                <p>You are connected to a web3 provider.</p>
+                <p>Your current wallet address is {address}.</p>
+                <p style={{ color: "red" }}>WARNING: CURRENTLY IN BETA, ONLY WORKING ON KOVAN TESTNET</p>
+                <CallViewMethodButton
+                  name="Your balance"
+                  onUpdate={getBalance}
+                  value={balance}
+                />
+
+                <button type="button" onClick={mintNFT}>
+                  Offset your carbon footprint!
+                </button>
+
+                {hasPendingTransactions ? (
+                  <>
+                    <h1 className="pending">Pending...</h1>
+                  </>) : (<> </>)}
+              </>
+            ) : (
+              <ConnectToMetamaskButton />
+            )}
+          </div>
+
+        )}
 
       </div>
       <div className="faqSection">
@@ -119,12 +156,7 @@ function App() {
         <p className="answer">From Investopedia: A carbon credit is a permit that allows the company that holds it to emit a certain amount of carbon dioxide or other greenhouse gases. One credit permits the emission of a mass equal to one ton of carbon dioxide. <br></br>We are taking advantage of these credits to allow users to voluntary offset their carbon emissions</p>
       </div>
     </main>
-  ) : (
-    <p>
-      Please install a Web3 provider like{' '}
-      <a href="https://metamask.io/">MetaMask</a> to use this app.
-    </p>
-  );
+  )
 
 }
 

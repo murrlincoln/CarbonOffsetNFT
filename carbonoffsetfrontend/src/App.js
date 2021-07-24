@@ -154,6 +154,8 @@ function App() {
         <p className="answer">Carbon Neutralized takes advantage of two main technologies. First, it uses Universal Protocol's <a href="https://universalcarbon.com/">UPC02 token</a>, which is a carbon credit based on the blockchain that represents one ton of carbon emissions. Second, it uses Uniswap in order to swap ETH to these tokens, and burn them so they are completely out of circulation. By doing this, you are effectively buying a carbon credit and using it to offset any emissions you may have caused through your transactions.</p>
         <h2 className="question">What is a carbon credit?</h2>
         <p className="answer">From Investopedia: A carbon credit is a permit that allows the company that holds it to emit a certain amount of carbon dioxide or other greenhouse gases. One credit permits the emission of a mass equal to one ton of carbon dioxide. <br></br>We are taking advantage of these credits to allow users to voluntary offset their carbon emissions</p>
+        <h2 className="question">Where can I find the GitHub repo for this project?</h2>
+        <p className="answer">Great question! It can be found <a href="https://github.com/murrlincoln/CarbonOffsetNFT">here</a>.</p>
       </div>
     </main>
   )
